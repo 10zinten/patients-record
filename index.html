@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Patient's Record</title>
+        <title>Sorig Medical Record</title>
         <meta charset="utf-8">
 
         <script src="https://unpkg.com/vue@3"></script>
@@ -10,13 +10,13 @@
 
     <body>
         <div id="app" class="container">
-            <h1 class="text-center">Patient's Record</h1>
+            <h1 class="text-center mt-3">Sorig Medical Record</h1>
             <div v-if="records.length > 0">
                 <div class="col-4">
                     <input v-model="search" class="form-control" placeholder="Search">
                 </div>
                 <hr>
-                <div>
+                <div v-if="filteredRecords.length > 0">
                     <table class="table">
                         <thead>
                             <tr>
@@ -36,9 +36,12 @@
                         </tbody>
                     </table>
                 </div>
+                <div v-else class="text-center">
+                    No Records Found!
+                </div>
             </div>
 
-            <div v-else>
+            <div v-else class="text-center">
                 Loading...
             </div>
         </div>
