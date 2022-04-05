@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <title>Patient's Record</title>
+        <meta charset="utf-8">
+
+        <script src="https://unpkg.com/vue@3"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    </head>
+
+    <body>
+        <div id="app">
+            {{ records }}
+        </div>
+
+        <script>
+
+            var app = Vue.createApp({
+                data() {
+                    return {
+                        data_url:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTmQL4tEvkyWDBgySexEzFQa3LebyzwoLWA6yzlq_2trZMC12iii37q7QT87c53sKbm8j1s-zAEPLc/pub?gid=0&single=true&output=csv",
+                        records_columns: ["Name", "Age", "Gender", "Date", "Symptoms", "Pluse", "Medication", "Therapy"],
+                        records: []
+                    }
+                },
+
+                methods: {
+                    async fetchRecords() {
+                        const response = await axios.get(this.data_url)
+                        this.parseRecords(response.data)
+                    },
+
+                    parseRecords(records_raw) {
+                        rows = records_raw.split("\n")
+                        rows.shift() // frist row in csv is cols name
+                        rows.forEach((row_raw) => {
+                            data = row_raw.split(",")
+                            row = {}
+                            for (let i = 0; i < this.records_columns.length; i++) {
+                                console.log(this.records_columns[i], i)
+                                row[this.records_columns[i]] = data[i]
+                            }
+                            this.records.push(row)
+                        })
+                    }
+                },
+
+                mounted () {
+                    this.fetchRecords()
+                }
+            }).mount("#app")
+
+        </script>
+    </body>
+</html>
