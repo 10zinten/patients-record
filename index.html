@@ -9,7 +9,36 @@
 
     <body>
         <div id="app">
-            {{ records }}
+            <div v-if="records.length > 0">
+                <div>
+                Search here : <input v-model="search">
+                </div>
+                <hr>
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th
+                                    v-for="col in records_columns"
+                                    :key="col"
+                                >{{ col }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="row in filteredRecords">
+                                <td v-for="col in records_columns">
+                                    {{ row[col] }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div v-else>
+                Loading...
+            </div>
         </div>
 
         <script>
@@ -19,7 +48,24 @@
                     return {
                         data_url:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTmQL4tEvkyWDBgySexEzFQa3LebyzwoLWA6yzlq_2trZMC12iii37q7QT87c53sKbm8j1s-zAEPLc/pub?gid=0&single=true&output=csv",
                         records_columns: ["Name", "Age", "Gender", "Date", "Symptoms", "Pluse", "Medication", "Therapy"],
-                        records: []
+                        records: [],
+                        search: ""
+                    }
+                },
+
+                computed: {
+                    filteredRecords() {
+                        return this.records.filter((row) => {
+                            return (
+                                this.includes(this.search, row[this.records_columns[0]]) ||
+                                this.includes(this.search, row[this.records_columns[1]]) ||
+                                this.includes(this.search, row[this.records_columns[2]]) ||
+                                this.includes(this.search, row[this.records_columns[3]]) ||
+                                this.includes(this.search, row[this.records_columns[4]]) ||
+                                this.includes(this.search, row[this.records_columns[6]]) ||
+                                this.includes(this.search, row[this.records_columns[7]])
+                            )
+                        })
                     }
                 },
 
@@ -36,12 +82,16 @@
                             data = row_raw.split(",")
                             row = {}
                             for (let i = 0; i < this.records_columns.length; i++) {
-                                console.log(this.records_columns[i], i)
                                 row[this.records_columns[i]] = data[i]
                             }
                             this.records.push(row)
                         })
-                    }
+                    },
+
+                    includes(s1, s2) {
+                        console.log(s1, s2, s2.toLowerCase().includes(s1.toLowerCase()))
+                        return s2.toLowerCase().includes(s1.toLowerCase());
+                    },
                 },
 
                 mounted () {
